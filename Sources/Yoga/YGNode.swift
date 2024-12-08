@@ -51,6 +51,10 @@ extension YGNode {
     YGNodeStyleSetHeight(self, height)
   }
 
+  public func setPadding(_ edge: YGEdge, _ value: Float) {
+    YGNodeStyleSetPadding(self, edge, value)
+  }
+
   public func setHeightAuto() {
     YGNodeStyleSetHeightAuto(self)
   }
@@ -73,5 +77,13 @@ extension YGNode {
 
   public func setJustifyContent(_ justifyContent: YGJustify) {
     YGNodeStyleSetJustifyContent(self, justifyContent)
+  }
+
+  public func setFlexGrow(_ flexGrow: Float) {
+    YGNodeStyleSetFlexGrow(self, flexGrow)
+  }
+
+  public func setFlexShrink(_ flexShrink: Float) {
+    YGNodeStyleSetFlexShrink(self, flexShrink)
   }
 }

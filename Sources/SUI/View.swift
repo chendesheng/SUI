@@ -72,7 +72,7 @@ public class View: EventEmitter {
 
   public var nodeRectRounded: SKRRect {
     let radius = borderRadius ?? 0
-    return nodeRect.rounded(x: radius, y: radius)
+    return nodeRect.toRRect(radius: radius)
   }
 
   public func drawSelf(_ canvas: SKCanvas) {

@@ -63,9 +63,10 @@ public struct SKCanvas {
     sk_canvas_draw_circle(pointer, circle.x, circle.y, radius, paint.pointer)
   }
 
-  public func draw(simpleText: String, x: Float, y: Float, paint: SKPaint) {
+  public func draw(simpleText: String, x: Float, y: Float, font: SKFont?, paint: SKPaint) {
     sk_canvas_draw_simple_text(
-      pointer, simpleText, simpleText.utf8.count, UTF8_SK_TEXT_ENCODING, x, y, paint.pointer, nil)
+      pointer, simpleText, simpleText.utf8.count, UTF8_SK_TEXT_ENCODING, x, y, font?.pointer,
+      paint.pointer)
   }
   // func draw(image: SKImage, paint: SKPaint, matrix: SKMatrix) {
   //   var mutableMatrix = matrix
@@ -73,25 +74,31 @@ public struct SKCanvas {
   // }
 
   public func draw(
-    shadow: SKRRect, paint: SKPaint, offsetX: Int32 = 0, offsetY: Int32 = 0, spread: Float = 0
+    shadow: SKRRect, paint: SKPaint, blur: Float, offsetX: Float = 0, offsetY: Float = 0,
+    spread: Float = 0
   ) {
     let maskFilter = paint.getMaskFilter()
-    defer {
-      if let maskFilter = maskFilter {
-        paint.setMaskFilter(maskFilter)
-      }
-    }
+    defer { paint.setMaskFilter(maskFilter) }
 
     let rrect = shadow.outset(dx: spread, dy: spread).offset(dx: offsetX, dy: offsetY)
-    paint.setMaskFilter(makeMaskFilter(blur: NORMAL_SK_BLUR_STYLE, sigma: 10))
+    paint.setMaskFilter(makeMaskFilter(blur: NORMAL_SK_BLUR_STYLE, sigma: blur))
     draw(rrect: rrect, paint: paint)
   }
 
-  public func draw(popoutBackground: SKRRect, paint: SKPaint) {
+  public func draw(
+    innerShadow: SKRRect, color: SKColor, blur: Float, offsetX: Float = 0, offsetY: Float = 0,
+    spread: Float = 0
+  ) {
+    let rrect = innerShadow.offset(dx: offsetX, dy: offsetY)
     let paint = SKPaint()
+    paint.setColor(color)
+    paint.setStyle(.stroke)
+    paint.setStrokeWidth(spread)
     paint.setAntiAlias(true)
-    paint.setColor(Colors.gray40)
-    paint.setStyle(.fill)
-    draw(rrect: popoutBackground, paint: paint)
+    paint.setMaskFilter(makeMaskFilter(blur: NORMAL_SK_BLUR_STYLE, sigma: blur))
+    save()
+    clip(rrect: innerShadow, operation: INTERSECT_SK_CLIPOP)
+    draw(rrect: rrect, paint: paint)
+    restore()
   }
 }

@@ -12,9 +12,14 @@ public class SKPaint {
     setColor(color)
   }
 
-  public convenience init(color: Colors) {
+  public convenience init(antialias: Bool) {
     self.init()
-    setColor(color)
+    setAntiAlias(antialias)
+  }
+
+  public convenience init(style: SKPaintStyle) {
+    self.init()
+    setStyle(style)
   }
 
   deinit {
@@ -25,11 +30,11 @@ public class SKPaint {
     sk_paint_set_color(pointer, color)
   }
 
-  public func setColor(_ color: Colors) {
-    sk_paint_set_color(pointer, color.rawValue)
+  public func setShader(_ shader: SKShader?) {
+    sk_paint_set_shader(pointer, shader?.pointer)
   }
 
-  public func setMaskFilter(_ filter: SKMaskFilter) {
+  public func setMaskFilter(_ filter: SKMaskFilter?) {
     sk_paint_set_maskfilter(pointer, filter)
   }
 
@@ -40,7 +45,16 @@ public class SKPaint {
   public func setAntiAlias(_ antialias: Bool) {
     sk_paint_set_antialias(pointer, antialias)
   }
+
+  public var isAntiAlias: Bool {
+    return sk_paint_is_antialias(pointer)
+  }
+
   public func setStyle(_ style: SKPaintStyle) {
     sk_paint_set_style(pointer, sk_paint_style_t(style.rawValue))
+  }
+
+  public func setStrokeWidth(_ width: Float) {
+    sk_paint_set_stroke_width(pointer, width)
   }
 }

@@ -1,0 +1,25 @@
+import Skia
+
+extension SKColor {
+  public static let red = SKColor(0xff_ff_00_00)
+  public static let green = SKColor(0xff_00_ff_00)
+  public static let blue = SKColor(0xff_00_00_ff)
+  public static let black = SKColor(0xff_00_00_00)
+  public static let yellow = SKColor(0xff_ff_ff_00)
+  public static let purple = SKColor(0xff_ff_00_ff)
+  public static let orange = SKColor(0xff_ff_a5_00)
+  public static let pink = SKColor(0xff_ff_c0_cb)
+  public static let brown = SKColor(0xff_a5_2a_2a)
+  public static let silver = SKColor(0xff_c0_c0_c0)
+  public static let gray = SKColor(0xff_80_80_80)
+  public static let olive = SKColor(0xff_80_80_00)
+  public static let teal = SKColor(0xff_00_80_80)
+  public static let navy = SKColor(0xff_00_00_80)
+  public static let maroon = SKColor(0xff_80_00_00)
+  public static let white = SKColor(0xff_ff_ff_ff)
+  public static let white32 = white.setOpacity(0.32)
+  public static let gray40 = makeColor(gray: 40)
+  public static let gray94 = makeColor(gray: 94)
+  public static let buttonGradientStart = makeColor(r: 49, g: 104, b: 221)
+  public static let buttonGradientEnd = makeColor(r: 44, g: 95, b: 200)
+}

@@ -4,7 +4,7 @@ import SUI
 
 let app = try Application()
 let window = try app.createWindow(width: 800, height: 600, title: "Hello World")
-let button = Button(title: "Hello")
+let button = Button(title: "Hello", isPrimary: true)
 button.addEventListener(.Click) { event in
     print("click")
     let win = try! app.createWindow(width: 800, height: 600, title: "Hello World2")

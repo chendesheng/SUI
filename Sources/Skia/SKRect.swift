@@ -53,17 +53,13 @@ extension SKRect {
   }
 
   public func toRRect() -> SKRRect {
-    return rounded(x: 0, y: 0)
+    return toRRect(radius: 0)
   }
 
-  public func toRRect(radii: SKVector) -> SKRRect {
+  public func toRRect(radius: Float) -> SKRRect {
     let rrect = sk_rrect_new()!
-
     var rect = self
-    sk_rrect_set_rect(rrect, &rect)
-
-    var mutableRadii = radii
-    sk_rrect_set_rect_radii(rrect, &rect, &mutableRadii)
+    sk_rrect_set_rect_xy(rrect, &rect, radius, radius)
     return rrect
   }
 
@@ -71,14 +67,6 @@ extension SKRect {
     let path = SKPath()
     path.add(rect: self, direction: CW_SK_PATH_DIRECTION)
     return path
-  }
-
-  public func rounded(x: Float, y: Float) -> SKRRect {
-    let rrect = sk_rrect_new()!
-    var radii = sk_vector_t(x: x, y: y)
-    var rect = self
-    sk_rrect_set_rect_radii(rrect, &rect, &radii)
-    return rrect
   }
 
   public func contains(_ point: SKPoint) -> Bool {
@@ -91,6 +79,9 @@ extension SKRect {
 }
 
 extension SKRRect {
+  public var width: Float { sk_rrect_get_width(self) }
+  public var height: Float { sk_rrect_get_height(self) }
+
   public var rect: SKRect {
     var rect = SKRect()
     sk_rrect_get_rect(self, &rect)
