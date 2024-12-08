@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:swift-cli}",
+      "name": "Debug Demo",
+      "program": "${workspaceFolder:swift-cli}/.build/debug/Demo",
+      "preLaunchTask": "swift: Build Debug Demo"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:swift-cli}",
+      "name": "Release Demo",
+      "program": "${workspaceFolder:swift-cli}/.build/release/Demo",
+      "preLaunchTask": "swift: Build Release Demo"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:swift-cli}",
+      "name": "Debug Demo",
+      "program": "${workspaceFolder:swift-cli}/.build/debug/Demo",
+      "preLaunchTask": "swift: Build Debug Demo"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:swift-cli}",
+      "name": "Release Demo",
+      "program": "${workspaceFolder:swift-cli}/.build/release/Demo",
+      "preLaunchTask": "swift: Build Release Demo"
+    }
+  ]
+}
