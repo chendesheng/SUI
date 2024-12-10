@@ -18,8 +18,10 @@ let package = Package(
         .target(
             name: "CSkia",
             linkerSettings: [
-                .unsafeFlags(["-LSources/CSkia"]),
+                .unsafeFlags(["-L../skiasharp/out/AppleSilicon"]),
+                .linkedLibrary("skia"),
                 .linkedLibrary("SkiaSharp"),
+                .linkedFramework("Cocoa"),
             ]
         ),
         .target(

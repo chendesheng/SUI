@@ -1,5 +1,4 @@
 module CSkia [system] {
 	umbrella header "umbrella.h"
-	link "SkiaSharp"
 	export *
 }
