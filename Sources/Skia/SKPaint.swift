@@ -7,6 +7,10 @@ public class SKPaint {
     self.pointer = sk_paint_new()
   }
 
+  public init(pointer: OpaquePointer) {
+    self.pointer = pointer
+  }
+
   public convenience init(color: SKColor) {
     self.init()
     setColor(color)

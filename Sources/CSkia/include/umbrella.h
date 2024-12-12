@@ -39,3 +39,5 @@
 #include "skresources_resource_provider.h"
 #include "skottie_animation.h"
 #include "sksg_invalidation_controller.h"
+
+#include "sk_paragraph.h"

@@ -20,6 +20,9 @@ let package = Package(
             linkerSettings: [
                 .unsafeFlags(["-L../skiasharp/out/AppleSilicon"]),
                 .linkedLibrary("skia"),
+                .linkedLibrary("skparagraph"),
+                .linkedLibrary("skshaper"),
+                .linkedLibrary("skunicode"),
                 .linkedLibrary("SkiaSharp"),
                 .linkedFramework("Cocoa"),
             ]

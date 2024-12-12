@@ -9,7 +9,18 @@ public class View: EventEmitter {
 
   internal var children: [View] = []
   private weak var parent: View?
-  internal let node: YGNode
+  internal var node: YGNode
+  public var interactive: Bool {
+    return true
+  }
+  public var hidden: Bool {
+    get {
+      return node.hidden
+    }
+    set {
+      node.hidden = newValue
+    }
+  }
 
   deinit {
     node.free()

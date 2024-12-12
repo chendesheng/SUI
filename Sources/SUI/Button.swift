@@ -2,14 +2,30 @@ import Skia
 import Yoga
 
 public class Button: View {
-  private let title: String
   private var isPressed: Bool = false
   private let isPrimary: Bool
-  private var font: SKFont?
+  private var font: SKFont
 
-  public init(title: String, isPrimary: Bool = false) {
-    self.title = title
+  private var textView: TextView? {
+    return children.first { $0 is TextView } as? TextView
+  }
+
+  var text: String {
+    get {
+      return textView?.data ?? ""
+    }
+    set {
+      if let textView = textView {
+        textView.data = newValue
+      }
+    }
+  }
+
+  public init(text: String, isPrimary: Bool = false) {
     self.isPrimary = isPrimary
+    let typeface = SKTypeface(file: "/Library/Fonts/SF-Pro.ttf")
+    font = SKFont(typeface: typeface, size: 14)
+
     super.init()
 
     node.setWidth(100)
@@ -19,8 +35,7 @@ public class Button: View {
     node.setAlignItems(.center)
     node.setFlexGrow(0)
 
-    let typeface = SKTypeface(file: "/Library/Fonts/SF-Pro.ttf")
-    font = SKFont(typeface: typeface, size: 14)
+    appendChild(TextView(data: text, color: .white))
   }
 
   override public var borderRadius: Float? {
@@ -47,14 +62,6 @@ public class Button: View {
       paint.setColor(.gray94.lighten(lightenFactor))
     }
     canvas.draw(rrect: nodeRectRounded, paint: paint, elevation: true)
-    // print(nodeRect)
-    // canvas.draw(rect: nodeRect, paint: paint)
-
-    let paint2 = SKPaint(color: .white)
-    canvas.draw(simpleText: title, x: 0, y: 14, font: font, paint: paint2)
-
-    // sk_canvas_draw_simple_text(
-    //   canvas, title, title.utf8.count, UTF8_SK_TEXT_ENCODING, 0, 0, paint, nil)
   }
 
   override public func dispatchEvent(_ event: ViewEvent) {

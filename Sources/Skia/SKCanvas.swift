@@ -68,6 +68,11 @@ public struct SKCanvas {
       pointer, simpleText, simpleText.utf8.count, UTF8_SK_TEXT_ENCODING, x, y, font?.pointer,
       paint.pointer)
   }
+
+  public func draw(paragraph: SKParagraph, x: Float, y: Float) {
+    paragraph.paint(canvas: self, x: x, y: y)
+  }
+
   // func draw(image: SKImage, paint: SKPaint, matrix: SKMatrix) {
   //   var mutableMatrix = matrix
   //   sk_canvas_draw_image(self, image, 0, 0, &mutableMatrix, paint)

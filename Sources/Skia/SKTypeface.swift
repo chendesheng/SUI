@@ -6,6 +6,10 @@ public class SKTypeface {
     self.pointer = sk_typeface_create_default()
   }
 
+  public init(pointer: OpaquePointer) {
+    self.pointer = pointer
+  }
+
   public init(file: String, index: Int32 = 0) {
     self.pointer = sk_typeface_create_from_file(file, index)
   }

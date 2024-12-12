@@ -4,11 +4,11 @@ import SUI
 
 let app = try Application()
 let window = try app.createWindow(width: 800, height: 600, title: "Hello World")
-let button = Button(title: "Hello", isPrimary: true)
+let button = Button(text: "Hello", isPrimary: true)
 button.addEventListener(.Click) { event in
     print("click")
     let win = try! app.createWindow(width: 800, height: 600, title: "Hello World2")
-    win.appendChild(Button(title: "Hello2"))
+    win.appendChild(Button(text: "Hello2"))
 }
 window.appendChild(button)
 window.addEventListener(.Keypress) { event in

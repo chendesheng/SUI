@@ -86,6 +86,11 @@ public class SKFont {
     return xpos
   }
 
+  public var size: Float {
+    get { sk_font_get_size(pointer) }
+    set { sk_font_set_size(pointer, newValue) }
+  }
+
   deinit {
     sk_font_delete(pointer)
   }

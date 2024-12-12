@@ -1,6 +1,7 @@
 import yoga
 
 public typealias YGNode = YGNodeRef
+public typealias Size = YGSize
 
 public func makeYGNode() -> YGNode {
   return YGNodeNew()
@@ -85,5 +86,22 @@ extension YGNode {
 
   public func setFlexShrink(_ flexShrink: Float) {
     YGNodeStyleSetFlexShrink(self, flexShrink)
+  }
+
+  public func setMeasureFunc(_ measureFunc: @escaping YGMeasureFunc) {
+    YGNodeSetMeasureFunc(self, measureFunc)
+  }
+
+  public func markDirty() {
+    YGNodeMarkDirty(self)
+  }
+
+  public var hidden: Bool {
+    get {
+      return YGNodeStyleGetDisplay(self) == .none
+    }
+    set {
+      YGNodeStyleSetDisplay(self, newValue ? .none : .flex)
+    }
   }
 }
