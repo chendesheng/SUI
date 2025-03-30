@@ -11,15 +11,19 @@ extension SKColor {
   }
 
   var r: UInt8 {
-    return UInt8(self >> 16)
+    return UInt8((self >> 16) & 0xFF)
   }
 
   var g: UInt8 {
-    return UInt8(self >> 8)
+    return UInt8((self >> 8) & 0xFF)
   }
 
   var b: UInt8 {
-    return UInt8(self)
+    return UInt8(self & 0xFF)
+  }
+
+  var a: Float {
+    return Float((self >> 24) & 0xFF) / 255.0
   }
 
   public func opacity() -> Float {
