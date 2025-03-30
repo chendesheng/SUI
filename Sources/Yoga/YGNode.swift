@@ -40,6 +40,14 @@ extension YGNode {
     return YGNodeLayoutGetTop(self)
   }
 
+  public func getComputedRight() -> Float {
+    return YGNodeLayoutGetRight(self)
+  }
+
+  public func getComputedBottom() -> Float {
+    return YGNodeLayoutGetBottom(self)
+  }
+
   public func setWidth(_ width: Float) {
     YGNodeStyleSetWidth(self, width)
   }
@@ -103,5 +111,13 @@ extension YGNode {
     set {
       YGNodeStyleSetDisplay(self, newValue ? .none : .flex)
     }
+  }
+
+  public func removeChild(_ child: YGNode) {
+    YGNodeRemoveChild(self, child)
+  }
+
+  public func getOverflow() -> Int32 {
+    return YGNodeStyleGetOverflow(self).rawValue
   }
 }

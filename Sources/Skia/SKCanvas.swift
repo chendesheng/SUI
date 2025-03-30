@@ -37,13 +37,13 @@ public struct SKCanvas {
   }
 
   public func clip(
-    path: SKPath, operation: sk_clipop_t = INTERSECT_SK_CLIPOP, antialias: Bool = false
+    path: SKPath, operation: sk_clipop_t = INTERSECT_SK_CLIPOP, antialias: Bool = true
   ) {
     sk_canvas_clip_path_with_operation(pointer, path.pointer, operation, antialias)
   }
 
-  public func clip(rrect: SKRRect, operation: sk_clipop_t, antialias: Bool = false) {
-    sk_canvas_clip_rrect_with_operation(pointer, rrect, operation, antialias)
+  public func clip(rrect: SKRRect) {
+    sk_canvas_clip_rrect_with_operation(pointer, rrect, INTERSECT_SK_CLIPOP, true)
   }
 
   public func draw(path: SKPath, paint: SKPaint) {
@@ -102,7 +102,7 @@ public struct SKCanvas {
     paint.setAntiAlias(true)
     paint.setMaskFilter(makeMaskFilter(blur: NORMAL_SK_BLUR_STYLE, sigma: blur))
     save()
-    clip(rrect: innerShadow, operation: INTERSECT_SK_CLIPOP)
+    clip(rrect: innerShadow)
     draw(rrect: rrect, paint: paint)
     restore()
   }
