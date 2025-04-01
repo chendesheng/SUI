@@ -1,6 +1,6 @@
 import Skia
 
-class DirtyArea {
+public class DirtyArea {
   private var rects: [SKRect] = []
 
   func addRect(rect: SKRect?) {
@@ -14,7 +14,7 @@ class DirtyArea {
     return rects.isEmpty
   }
 
-  func isIntersect(view: View) -> Bool {
+  func isIntersect(_ view: View) -> Bool {
     let bounds = view.getBounds()!
     return rects.contains { dirtyRect in
       dirtyRect.isIntersect(bounds)
@@ -29,11 +29,25 @@ class DirtyArea {
     return path
   }
 
-  func clip(canvas: SKCanvas) {
+  func clip(_ canvas: SKCanvas) {
     canvas.clip(path: getDirtyPath())
   }
 
   func debugDraw(canvas: SKCanvas, paint: SKPaint) {
     canvas.draw(path: getDirtyPath(), paint: paint)
+  }
+}
+
+class NoDirtyArea: DirtyArea {
+  override func isIntersect(_ view: View) -> Bool {
+    return true
+  }
+
+  override func clip(_ canvas: SKCanvas) {
+    // do nothing
+  }
+
+  override func debugDraw(canvas: SKCanvas, paint: SKPaint) {
+    // do nothing
   }
 }

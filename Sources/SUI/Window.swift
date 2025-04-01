@@ -18,12 +18,24 @@ public class Window: View, GLWindowDelegate {
     }
   }
 
+  var previousDirtyArea: DirtyArea? = nil
+  private var dirtyArea: DirtyArea = DirtyArea()
+  public override func markDirty(_ bounds: SKRect) {
+    self.dirtyArea.addRect(rect: bounds)
+  }
+
+  override public var notifySizeChanged: Bool {
+    return true
+  }
+
   public init?(width: Int32, height: Int32, title: String) {
     super.init()
 
     node.setFlexDirection(.column)
     node.setAlignItems(.center)
     node.setJustifyContent(.center)
+    node.setWidth(Float(width))
+    node.setHeight(Float(height))
 
     guard let glWindow = GLWindow.createWindow(width: width, height: height, title: title) else {
       return nil
@@ -57,7 +69,9 @@ public class Window: View, GLWindowDelegate {
   }
 
   public func handleResize(width: Int32, height: Int32) {
-    dispatchEvent(.Resize(target: self, data: SKSize.make(width, height)))
+    self.node.setWidth(Float(width))
+    self.node.setHeight(Float(height))
+    self.runLayout()
   }
 
   public func handleFramebufferResize(width: Int32, height: Int32) {
@@ -150,6 +164,40 @@ public class Window: View, GLWindowDelegate {
     return doHitTest(view: self, point: point)
   }
 
+  private func runLayout() {
+    var cnt = 0
+    while self.node.isDirty {
+      self.node.calculateLayout()
+      self.applyLayout(0.0, 0.0, 0.0, 0.0)
+      cnt += 1
+    }
+
+    if cnt > 5 {
+      print("runLayout loop times: \(cnt)")
+    }
+  }
+
+  private var tooltipView: View {
+    return children[0]
+  }
+
+  override public func draw(_ canvas: SKCanvas, _ dirtyArea: DirtyArea) {
+    if dirtyArea.isEmpty { return }
+
+    canvas.save()
+    dirtyArea.clip(canvas)
+    super.draw(canvas, dirtyArea)
+    canvas.restore()
+  }
+
+  override func drawChildren(_ canvas: SKCanvas, _ dirtyArea: DirtyArea) {
+    for i in 1..<self.children.count {
+      let child = self.children[i]
+      super.drawChild(canvas, child, dirtyArea)
+    }
+    super.drawChild(canvas, self.tooltipView, dirtyArea)
+  }
+
   func render() {
     guard let glWindow = self.glWindow else {
       return
@@ -159,9 +207,7 @@ public class Window: View, GLWindowDelegate {
       return
     }
 
-    let (width, height) = glWindow.getWindowSize()
-    node.calculateLayout(width: width, height: height)
-
+    self.runLayout()
     glWindow.makeContextCurrent()
 
     canvas.resetMatrix()
@@ -169,7 +215,10 @@ public class Window: View, GLWindowDelegate {
     canvas.scale(x: scaleX, y: scaleY)
 
     canvas.clear(color: 0xffff_ffff)
-    draw(canvas)
+
+    self.previousDirtyArea = dirtyArea
+    self.dirtyArea = DirtyArea()
+    self.draw(canvas, self.previousDirtyArea!)
 
     canvas.flushAndSubmit()
     glWindow.swapBuffers()

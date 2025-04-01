@@ -16,7 +16,9 @@ extension YGNode {
     YGNodeFree(self)
   }
 
-  public func calculateLayout(width: Float, height: Float) {
+  public func calculateLayout(
+    _ width: Float = YGValueUndefined.value, _ height: Float = YGValueUndefined.value
+  ) {
     YGNodeCalculateLayout(self, width, height, YGDirection.LTR)
   }
 
@@ -56,8 +58,16 @@ extension YGNode {
     YGNodeStyleSetWidthAuto(self)
   }
 
+  public func setWidthPercent(_ percent: Float) {
+    YGNodeStyleSetWidthPercent(self, percent)
+  }
+
   public func setHeight(_ height: Float) {
     YGNodeStyleSetHeight(self, height)
+  }
+
+  public func setHeightPercent(_ percent: Float) {
+    YGNodeStyleSetHeightPercent(self, percent)
   }
 
   public func setPadding(_ edge: YGEdge, _ value: Float) {
@@ -119,5 +129,17 @@ extension YGNode {
 
   public func getOverflow() -> Int32 {
     return YGNodeStyleGetOverflow(self).rawValue
+  }
+
+  public var isDirty: Bool {
+    return YGNodeIsDirty(self)
+  }
+
+  public var hasNewLayout: Bool {
+    return YGNodeGetHasNewLayout(self)
+  }
+
+  public func markLayoutSeen() {
+    YGNodeSetHasNewLayout(self, false)
   }
 }

@@ -6,6 +6,23 @@ public struct Layout {
   let top: Float
   let width: Float
   let height: Float
+
+  static func == (lhs: Layout, rhs: Layout) -> Bool {
+    return lhs.left == rhs.left && lhs.top == rhs.top && lhs.width == rhs.width
+      && lhs.height == rhs.height
+  }
+
+  static func != (lhs: Layout, rhs: Layout) -> Bool {
+    return !(lhs == rhs)
+  }
+
+  var size: SKSize {
+    return SKSize(w: width, h: height)
+  }
+
+  var pos: SKPoint {
+    return SKPoint(x: left, y: top)
+  }
 }
 
 public enum WalkContinue {
@@ -26,7 +43,7 @@ public class View: EventEmitter {
 
   internal var children: [View] = []
   private weak var parent: View?
-  internal var node: YGNode
+  public var node: YGNode
   public var interactive: Bool {
     return true
   }
@@ -61,9 +78,14 @@ public class View: EventEmitter {
       return
     }
 
-    if notifySizeChanged {
-      node.markDirty()
+    if let bounds = self.getBounds() {
+      let pos = self.getAbsolutePos()
+      self.markDirty(bounds.translate(x: pos.x, y: pos.y))
     }
+  }
+
+  public func markDirty(_ bounds: SKRect) {
+    self.window?.markDirty(bounds)
   }
 
   public var window: Window? {
@@ -158,7 +180,69 @@ public class View: EventEmitter {
     self.dispatchEvent(ViewEvent.ChildrenChanged(target: self, detail: ["removeAll": true]))
   }
 
-  public var layout: Layout? = nil
+  var layout: Layout? = nil
+  func updateLayout(_ newLayout: Layout) -> Bool {
+    if let layout = self.layout {
+      if layout != newLayout {
+        if notifyPositionChanged
+          && (layout.width != newLayout.width || layout.height != newLayout.height)
+        {
+          self.dispatchEvent(
+            ViewEvent.Resize(
+              target: self, size: newLayout.size, oldSize: layout.size))
+        }
+        if self.notifyPositionChanged
+          && (layout.left != newLayout.left || layout.top != newLayout.top)
+        {
+          self.dispatchEvent(
+            ViewEvent.PositionChanged(
+              target: self, pos: newLayout.pos, oldPos: layout.pos))
+        }
+
+        self.layout = newLayout
+        return true
+      }
+    } else {
+      self.layout = newLayout
+      if notifyPositionChanged {
+        self.dispatchEvent(ViewEvent.PositionChanged(target: self, pos: newLayout.pos, oldPos: nil))
+      }
+      if notifySizeChanged {
+        self.dispatchEvent(ViewEvent.Resize(target: self, size: newLayout.size, oldSize: nil))
+      }
+      return true
+    }
+
+    return false
+  }
+
+  func applyLayout(_ x: Float, _ y: Float, _ x1: Float, _ y1: Float, _ markDirty: Bool = true) {
+    if !self.node.hasNewLayout { return }
+    self.node.markLayoutSeen()
+
+    let newLayout = Layout(
+      left: self.nodeLeft, top: self.nodeTop, width: self.nodeWidth, height: self.nodeHeight)
+    let oldBounds = markDirty ? self.getBounds() : nil
+
+    var markDirty = markDirty
+    if self.updateLayout(newLayout) && markDirty {
+      let newBounds = self.getBounds()
+      if let oldBounds = oldBounds {
+        self.markDirty(oldBounds.translate(x: x1, y: y1))
+      }
+      if let newBounds = newBounds {
+        self.markDirty(newBounds.translate(x: x, y: y))
+      }
+      markDirty = false
+    }
+
+    for child in self.children {
+      child.applyLayout(
+        x + child.nodeLeft, y + child.nodeTop,
+        x1 + (child.layout?.left ?? 0), y1 + (child.layout?.top ?? 0),
+        markDirty)
+    }
+  }
 
   public func walk(_ callback: (View) -> WalkContinue, filter: ((View) -> Bool)? = nil) -> Bool {
     if let filter = filter {
@@ -308,19 +392,15 @@ public class View: EventEmitter {
   public func drawSelf(_ canvas: SKCanvas) {
   }
 
-  public func draw(_ canvas: SKCanvas) {
-    drawSelf(canvas)
+  public func draw(_ canvas: SKCanvas, _ dirtyArea: DirtyArea) {
+    if hidden { return }
+    if !dirtyArea.isIntersect(self) { return }
 
-    for child in children {
-      canvas.save()
-      defer { canvas.restore() }
-
-      canvas.translate(x: child.nodeLeft, y: child.nodeTop)
-      child.draw(canvas)
-    }
+    self.drawSelf(canvas)
+    self.drawChildren(canvas, dirtyArea)
   }
 
-  func drawChildren(_ canvas: SKCanvas) {
+  func drawChildren(_ canvas: SKCanvas, _ dirtyArea: DirtyArea) {
     let clip = node.getOverflow()
     if clip == 0 {
       canvas.save()
@@ -330,17 +410,16 @@ public class View: EventEmitter {
     }
 
     for child in self.getChildrenOrderByZIndex() {
-      self.drawChild(canvas, child)
+      self.drawChild(canvas, child, dirtyArea)
     }
   }
 
-  func drawChild(_ canvas: SKCanvas, _ child: View) {
+  func drawChild(_ canvas: SKCanvas, _ child: View, _ dirtyArea: DirtyArea) {
     let x = child.nodeLeft
     let y = child.nodeTop
     canvas.translate(x: x, y: y)
-    defer { canvas.translate(x: -x, y: -y) }
-
-    child.draw(canvas)
+    child.draw(canvas, dirtyArea)
+    canvas.translate(x: -x, y: -y)
   }
 
   var nodeInnerRect: SKRect {
@@ -364,6 +443,11 @@ public class View: EventEmitter {
   }
 
   public func getBounds() -> SKRect? {
+    if let layout = layout {
+      return SKRect.make(
+        width: layout.width,
+        height: layout.height)
+    }
     return nil
   }
 

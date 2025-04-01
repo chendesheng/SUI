@@ -10,7 +10,11 @@ button.addEventListener(.Click) { event in
     let win = try! app.createWindow(width: 800, height: 600, title: "Hello World2")
     win.appendChild(Button(text: "Hello2"))
 }
-window.appendChild(button)
+let overlay = OverlayView()
+overlay.node.setAlignItems(.center)
+overlay.node.setJustifyContent(.center)
+window.appendChild(overlay)
+overlay.appendChild(button)
 window.addEventListener(.Keypress) { event in
     if case let .Keypress(_, key) = event {
         if key == .Escape {

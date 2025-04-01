@@ -91,7 +91,7 @@ public class TextView: View {
     self.node.setFlexShrink(1)
   }
 
-  override public func draw(_ canvas: SKCanvas) {
+  override public func draw(_ canvas: SKCanvas, _ dirtyArea: DirtyArea) {
     if self.hidden {
       return
     }

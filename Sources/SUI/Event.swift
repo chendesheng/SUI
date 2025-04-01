@@ -17,6 +17,7 @@ public enum ViewEventType: Int {
   case DidMount = 12
   case WillUnmount = 13
   case ChildrenChanged = 14
+  case PositionChanged = 15
 }
 
 public enum ViewEvent {
@@ -30,7 +31,8 @@ public enum ViewEvent {
   case Click(target: View, data: MouseEventData)
   case DblClick(target: View, data: MouseEventData)
   case TplClick(target: View, data: MouseEventData)
-  case Resize(target: View, data: SKSize)
+  case Resize(target: View, size: SKSize, oldSize: SKSize?)
+  case PositionChanged(target: View, pos: SKPoint, oldPos: SKPoint?)
   case WindowClose(target: View)
   case DidMount(target: View)
   case WillUnmount(target: View)
@@ -68,6 +70,8 @@ public enum ViewEvent {
       return .WillUnmount
     case .ChildrenChanged:
       return .ChildrenChanged
+    case .PositionChanged:
+      return .PositionChanged
     }
   }
 }
